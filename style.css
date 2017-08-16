@@ -1,0 +1,8 @@
+*{margin: 0;padding: 0;box-sizing: border-box;}
+.table{width: 100%;margin: 20px auto;font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+.table td{background-color: #aaa;}
+.menu, .content{min-height: 100vh;float: left;}
+.menu{background-color: #ddf;width: calc(20vw - 17px);font-size: 200px;}
+.content{background-color: #f99;width: 80vw;}
+.tablejax-page{text-align: right;padding-right: 20px;}
+.linker{padding: 5px;background-color: #ddd;border-radius: 4px;width: 30px;height: 30px;text-align: center;}
