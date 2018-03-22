@@ -60,6 +60,7 @@ if(!isset($_GET['page'])){
             item.dataset.ninjaxUrl = _url;
             item.dataset.ninjaxMethod = _method;
             item.dataset.ninjaxParams = _params.toString().replace(/\,/,'&');
+            window.sessionStorage.getItem('Ninjax') ? window.sessionStorage.getItem('Ninjax') : window.sessionStorage.setItem('Ninjax', window.location.href);
             this.init(item, _event);
           });
           this.popstate();
@@ -70,10 +71,11 @@ if(!isset($_GET['page'])){
             const _params = (tag.dataset.ninjaxParams!=='' ? '?'+tag.dataset.ninjaxParams : tag.dataset.ninjaxParams),
             _method = tag.dataset.ninjaxMethod,
             _url = tag.dataset.ninjaxUrl+_params;
-            this.ajax(_method, _url)
+            this.ajax(_method, _url);
+            window.sessionStorage.setItem('Ninjax', window.sessionStorage.getItem('Ninjax')+', '+_url)
           });
         }
-        ajax(method, url){
+        ajax(method, url, popstate){
           const _xhr = new XMLHttpRequest(),
           _to = window.document.querySelector(this.to);
           _xhr.open(method, url, true);
@@ -87,7 +89,9 @@ if(!isset($_GET['page'])){
               const _parser = new DOMParser(),
               _html = _parser.parseFromString(xhrRes.response, "text/html");
               _to.innerHTML = _html.querySelector(this.to).innerHTML;
-              this.url({method: method, url: _xhr.responseURL}, _html.querySelector('title').textContent, _xhr.responseURL);
+              if(!popstate){
+                this.url({method: method, url: _xhr.responseURL}, _html.querySelector('title').textContent, _xhr.responseURL);
+              }
             }
           });
           _xhr.send();
@@ -97,20 +101,18 @@ if(!isset($_GET['page'])){
           window.history.pushState(obj, title, link);
         }
         popstate(){
-          window.addEventListener('popstate', e => {
-            const _state = window.history.state;
-            this.ajax(_state.method, _state.url);
-            /*console.log(window.history.state);*/
+          window.addEventListener('popstate', (e, f) => {
+            console.log(e.state.url, history.state);
+            this.ajax('GET', e.state.url, true);
           });
         }
       }
+
       /*new Ninjax('a', '.content');*/
       new Ninjax({
         tag: 'a',
         to: '.content'
       });
-        /*new ninjax({tag: '[data-ninjax]', to: '.table'});
-        new ninjax('form', '.table');*/
     </script>
 </body>
 </html>
